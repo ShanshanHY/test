@@ -14,7 +14,7 @@ jobs:
       with:
         python-version: "3.10"
     - run: |
-        sed '${{ github.event.inputs.cookie }}' 5.txt
+        COOKIE: ${{ github.event.inputs.cookie }}
         python py.py
         git config user.name github-actions
         git config user.email github-actions@github.com
