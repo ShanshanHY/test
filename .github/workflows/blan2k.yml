@@ -1,16 +1,23 @@
 on: 
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'Log level'     
+      cookie:
+        description: '输入Cookie'     
         required: true
-        default: 'warning'
-      tags:
-        description: 'Test scenario tags'  
 jobs:
   printInputs:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
     - run: |
-        sed '${{ github.event.inputs.logLevel }}' 1.txt
-        sed '${{ github.event.inputs.tags }}' 1.txt
+        sed '${{ github.event.inputs.cookie }}' 5.txt
+        python py.py
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add ./5.txt
+        git commit -m "test"
+        git push
