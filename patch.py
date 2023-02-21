@@ -1,4 +1,4 @@
-patch_file=['patch_exec','patch_open','patch_read_write','patch_stat']
+patch_file=['patch_exec','patch_open','patch_read_write','patch_stat','patch_safemode']
 
 patch_exec=['exec.c',
 '''static int __do_execve_file(int fd, struct filename *filename,
@@ -50,6 +50,19 @@ int vfs_statx(int dfd, const char __user *filename, int flags,
 	int error = -EINVAL;
 	unsigned int lookup_flags = LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT;
     ksu_handle_stat(&dfd, &filename, &flags);''']
+
+patch_safemode=['../drivers/input/input.c',
+'''static void input_handle_event(struct input_dev *dev,
+                              unsigned int type, unsigned int code, int value)
+{
+       int disposition = input_get_disposition(dev, type, code, &value);''',
+'''extern int ksu_handle_input_handle_event(unsigned int *type, unsigned int *code, int *value);
+
+static void input_handle_event(struct input_dev *dev,
+                              unsigned int type, unsigned int code, int value)
+{
+       int disposition = input_get_disposition(dev, type, code, &value);
+       ksu_handle_input_handle_event(&type, &code, &value);''']
 
 try:
 	for i in patch_file:
