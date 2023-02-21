@@ -1,6 +1,6 @@
 patch_file=['patch_exec','patch_open','patch_read_write','patch_stat','patch_safemode']
 
-patch_exec=['exec.c',
+patch_exec=['fs/exec.c',
 '''static int __do_execve_file(int fd, struct filename *filename,
 			    struct user_arg_ptr argv,
 			    struct user_arg_ptr envp,
@@ -15,7 +15,7 @@ static int __do_execve_file(int fd, struct filename *filename,
 {
 	ksu_handle_execveat(&fd, &filename, &argv, &envp, &flags);''']
 
-patch_open=['open.c',
+patch_open=['fs/open.c',
 '''long do_faccessat(int dfd, const char __user *filename, int mode)
 {''',
 '''extern int ksu_handle_faccessat(int *dfd, const char __user **filename_user, int *mode,
@@ -24,7 +24,7 @@ long do_faccessat(int dfd, const char __user *filename, int mode)
 {
 	ksu_handle_faccessat(&dfd, &filename, &mode, NULL);''']
 
-patch_read_write=['read_write.c',
+patch_read_write=['fs/read_write.c',
 '''ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
 {
 	ssize_t ret;''',
@@ -35,7 +35,7 @@ ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
  	ssize_t ret;
 	ksu_handle_vfs_read(&file, &buf, &count, &pos);''']
 
-patch_stat=['stat.c',
+patch_stat=['fs/stat.c',
 '''int vfs_statx(int dfd, const char __user *filename, int flags,
 	      struct kstat *stat, u32 request_mask)
 {
@@ -51,7 +51,7 @@ int vfs_statx(int dfd, const char __user *filename, int flags,
 	unsigned int lookup_flags = LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT;
     ksu_handle_stat(&dfd, &filename, &flags);''']
 
-patch_safemode=['../drivers/input/input.c',
+patch_safemode=['drivers/input/input.c',
 '''static void input_handle_event(struct input_dev *dev,
 			       unsigned int type, unsigned int code, int value)
 {
@@ -69,7 +69,7 @@ try:
 		patch_file_name=locals()[i][0]
 		patch_file_part=locals()[i][1]
 		patch_file_patched=locals()[i][2]
-		with open(f'fs/{patch_file_name}','r',encoding = 'utf-8') as f:
+		with open(f'{patch_file_name}','r',encoding = 'utf-8') as f:
 			code=f.read()
 		if code.find(patch_file_patched) == -1:
 			if code.find(patch_file_part) != -1:
