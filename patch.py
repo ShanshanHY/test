@@ -74,7 +74,7 @@ try:
 		if code.find(patch_file_patched) == -1:
 			if code.find(patch_file_part) != -1:
 				patched_code = code.replace(patch_file_part, patch_file_patched)
-				with open(f'fs/{patch_file_name}','w',encoding = 'utf-8') as f:
+				with open(f'{patch_file_name}','w',encoding = 'utf-8') as f:
 					f.write(patched_code)
 				print(f'Patch "{patch_file_name}" Successfully!')
 			else:
